@@ -9,7 +9,7 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <Text>Skal vi videre</Text>
+      <Text>Skal vi vidhhhere</Text>
     </View>
   );
 }
