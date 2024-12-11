@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Platform, Text, View, StyleSheet } from 'react-native';
-
+import { Text, View, StyleSheet, Platform } from 'react-native';
 import * as Location from 'expo-location';
+import MapView, { Marker } from 'react-native-maps';
+
+// Make sure to replace 'YOUR_GOOGLE_MAPS_API_KEY' with your actual API key
+const GOOGLE_MAPS_API_KEY = 'AIzaSyBH2U1DDbagCm5WwJYwckw8S4BCM3_FZp8';
 
 export default function App() {
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
@@ -9,7 +12,6 @@ export default function App() {
 
   useEffect(() => {
     async function getCurrentLocation() {
-      
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         setErrorMsg('Permission to access location was denied');
@@ -33,6 +35,29 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Text style={styles.paragraph}>{text}</Text>
+
+      {location && (
+        <MapView
+          style={styles.map}
+          initialRegion={{
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+          provider={Platform.OS === 'android' ? 'google' : undefined} // Use Google Maps on Android
+          apiKey={GOOGLE_MAPS_API_KEY} // For Android, provide your API key
+        >
+          <Marker
+            coordinate={{
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+            }}
+            title="Your Location"
+            description="This is where you are currently."
+          />
+        </MapView>
+      )}
     </View>
   );
 }
@@ -48,18 +73,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: 'center',
   },
+  map: {
+    width: '100%',
+    height: 400,
+  },
 });
-
-export function Index() {
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>Skal vi vidhhhere</Text>
-    </View>
-  );
-}
